@@ -1,0 +1,51 @@
+// ==UserScript==
+// @name         b站自律脚本
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  1、将除搜索页、私信页、视频页的所有页面重定向到搜索页 2、视频页去掉相关推荐，非自己视频评论去掉。
+// @author       You
+// @match        https://www.bilibili.com/*
+// @icon         https://img.tukuppt.com/ad_preview/00/27/07/5cac6111aec70.jpg-0.jpg!/fw/288
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Your code here...
+        //针对bilibili的脚本：1、将除搜索页、私信页、视频页的所有页面重定向到搜索页 2、视频页去掉相关推荐，非自己视频的评论去掉。
+    //https://search.bilibili.com/all
+    //https://www.bilibili.com/video/
+    //https://message.bilibili.com/
+    // 获取当前页面的URL
+var currentUrl = window.location.href;
+
+// 如果当前页面不是搜索页、私信页、视频页，则重定向到搜索页
+if (
+    currentUrl.indexOf("https://search.bilibili.com/all") === -1 &&
+    currentUrl.indexOf("https://www.bilibili.com/video/") === -1 &&
+    currentUrl.indexOf("https://message.bilibili.com/") === -1
+) {
+    window.location.href = "https://search.bilibili.com/all";
+}
+
+// 如果当前页面是视频页
+if (currentUrl.indexOf("https://www.bilibili.com/video/") !== -1) {
+    // 去除相关推荐
+    var relatedVideos = document.querySelector(".video-recommend");
+    if (relatedVideos) {
+        relatedVideos.style.display = "none";
+    }
+
+    // 去除非自己视频的评论
+    var commentList = document.querySelectorAll(".comment-list li");
+    commentList.forEach(function(comment) {
+        var username = comment.querySelector(".name").innerText;
+        if (username !== "32252927373_bili") {
+            comment.style.display = "none";
+        }
+    });
+}
+
+
+})();
